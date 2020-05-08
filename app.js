@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   const grid = document.querySelector(".grid");
   const width = 8;
-  
   const candyColors = ["red", "yellow", "orange", "purple", "green", "blue"];
 
   //   Create Board
@@ -15,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
       grid.appendChild(square);
     }
   }
-  
+
   createBoard();
 
   //   Drag the candies
@@ -29,22 +28,46 @@ document.addEventListener("DOMContentLoaded", () => {
     square.addEventListener("drop", dragDrop);
   });
 
+  let colorBeingDragged;
+  let colorBeingReplaced;
+  let squareIdBeingDragged;
+  let squareIdBeingReplaced;
+
   function dragStart() {
-    console.log(this.id, "dragstart");
+    colorBeingDragged = this.style.backgroundColor;
+    squareIdBeingDragged = parseInt(this.id);
   }
-  function dragEnd() {
-    console.log(this.id, "dragend");
+  function dragOver(e) {
+    e.preventDefault();
   }
-  function dragOver() {
-    console.log(this.id, "dragover");
+  function dragEnter(e) {
+    e.preventDefault();
   }
-  function dragEnter() {
-    console.log(this.id, "dragenter");
-  }
-  function dragLeave() {
-    console.log(this.id, "dragleave");
+  function dragLeave(e) {
+    e.preventDefault();
   }
   function dragDrop() {
-    console.log(this.id, "drop");
+    colorBeingReplaced = this.style.backgroundColor;
+    squareIdBeingReplaced = parseInt(this.id);
+    this.style.backgroundColor = colorBeingDragged;
+    squares[squareIdBeingDragged].style.backgroundColor = colorBeingReplaced;
+  }
+  function dragEnd(e) {
+    let validMoves = [
+      squareIdBeingDragged - 1,
+      squareIdBeingDragged - width,
+      squareIdBeingDragged + 1,
+      squareIdBeingDragged + width,
+    ];
+    let validMove = validMoves.includes(squareIdBeingReplaced);
+
+    if (squareIdBeingReplaced && validMove) {
+      squareIdBeingReplaced = null;
+    } else if (squareIdBeingReplaced && !validMove) {
+      squares[squareIdBeingReplaced].style.backgroundColor = colorBeingReplaced;
+      squares[squareIdBeingDragged].style.backgroundColor = colorBeingDragged;
+    } else {
+      squares[squareIdBeingDragged].style.backgroundColor = colorBeingDragged;
+    }
   }
 });
